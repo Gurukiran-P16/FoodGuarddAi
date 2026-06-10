@@ -30,3 +30,23 @@ def test_predict_endpoint() -> None:
     payload = response.json()
     assert "prediction" in payload
     assert "xai" in payload
+
+
+def test_predict_endpoint_rejects_non_image_content_type() -> None:
+    client = TestClient(app)
+    response = client.post(
+        "/predict",
+        files={"file": ("sample.txt", b"not an image", "text/plain")},
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Only image uploads are supported."
+
+
+def test_predict_endpoint_rejects_corrupted_image() -> None:
+    client = TestClient(app)
+    response = client.post(
+        "/predict",
+        files={"file": ("broken.png", b"not-valid-image-bytes", "image/png")},
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Uploaded file is not a valid image."
