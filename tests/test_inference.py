@@ -8,3 +8,10 @@ def test_inference_output_values() -> None:
     result = run_inference(tensor)
     assert result["label"] in {"fresh", "stale"}
     assert 0.0 <= float(result["confidence"]) <= 1.0
+
+
+def test_inference_stale_for_zero_tensor() -> None:
+    tensor = np.zeros((224, 224, 3), dtype=np.float32)
+    result = run_inference(tensor)
+    assert result["label"] == "stale"
+    assert float(result["confidence"]) == 0.01

@@ -8,6 +8,7 @@ from PIL import UnidentifiedImageError
 
 
 def to_tensor(image_bytes: bytes) -> np.ndarray:
+    """Convert image bytes to a normalized RGB tensor with shape (224, 224, 3)."""
     try:
         image = Image.open(BytesIO(image_bytes)).convert("RGB").resize((224, 224))
     except (UnidentifiedImageError, OSError) as exc:
